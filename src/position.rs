@@ -1,7 +1,11 @@
 use std::fmt;
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// Original position of element in source code
 #[derive(PartialOrd, Ord, PartialEq, Eq, Clone, Copy, Default, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Pos {
     /// One-based line number
     pub line: usize,

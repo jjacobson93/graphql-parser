@@ -2,12 +2,24 @@ use std::str::FromStr;
 
 use thiserror::Error;
 
-pub use crate::common::{Directive, Type, Value, Text};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
+pub use crate::common::{Directive, Text, Type, Value};
 use crate::position::Pos;
 
 #[derive(Debug, Clone, Default, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct Document<'a, T: Text<'a>>
-    where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub definitions: Vec<Definition<'a, T>>,
 }
@@ -31,8 +43,15 @@ impl<'a> Document<'a, String> {
     }
 }
 
-
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub enum Definition<'a, T: Text<'a>> {
     SchemaDefinition(SchemaDefinition<'a, T>),
     TypeDefinition(TypeDefinition<'a, T>),
@@ -41,6 +60,14 @@ pub enum Definition<'a, T: Text<'a>> {
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct SchemaDefinition<'a, T: Text<'a>> {
     pub position: Pos,
     pub directives: Vec<Directive<'a, T>>,
@@ -50,6 +77,14 @@ pub struct SchemaDefinition<'a, T: Text<'a>> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub enum TypeDefinition<'a, T: Text<'a>> {
     Scalar(ScalarType<'a, T>),
     Object(ObjectType<'a, T>),
@@ -60,6 +95,14 @@ pub enum TypeDefinition<'a, T: Text<'a>> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub enum TypeExtension<'a, T: Text<'a>> {
     Scalar(ScalarTypeExtension<'a, T>),
     Object(ObjectTypeExtension<'a, T>),
@@ -70,6 +113,14 @@ pub enum TypeExtension<'a, T: Text<'a>> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct ScalarType<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -78,7 +129,8 @@ pub struct ScalarType<'a, T: Text<'a>> {
 }
 
 impl<'a, T> ScalarType<'a, T>
-    where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -91,6 +143,14 @@ impl<'a, T> ScalarType<'a, T>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct ScalarTypeExtension<'a, T: Text<'a>> {
     pub position: Pos,
     pub name: T::Value,
@@ -98,7 +158,8 @@ pub struct ScalarTypeExtension<'a, T: Text<'a>> {
 }
 
 impl<'a, T> ScalarTypeExtension<'a, T>
-    where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -110,6 +171,14 @@ impl<'a, T> ScalarTypeExtension<'a, T>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct ObjectType<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -120,7 +189,8 @@ pub struct ObjectType<'a, T: Text<'a>> {
 }
 
 impl<'a, T> ObjectType<'a, T>
-    where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -135,6 +205,14 @@ impl<'a, T> ObjectType<'a, T>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct ObjectTypeExtension<'a, T: Text<'a>> {
     pub position: Pos,
     pub name: T::Value,
@@ -144,7 +222,8 @@ pub struct ObjectTypeExtension<'a, T: Text<'a>> {
 }
 
 impl<'a, T> ObjectTypeExtension<'a, T>
-    where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -158,6 +237,14 @@ impl<'a, T> ObjectTypeExtension<'a, T>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct Field<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -168,6 +255,14 @@ pub struct Field<'a, T: Text<'a>> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct InputValue<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -178,6 +273,14 @@ pub struct InputValue<'a, T: Text<'a>> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct InterfaceType<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -188,7 +291,8 @@ pub struct InterfaceType<'a, T: Text<'a>> {
 }
 
 impl<'a, T> InterfaceType<'a, T>
-    where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -203,6 +307,14 @@ impl<'a, T> InterfaceType<'a, T>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct InterfaceTypeExtension<'a, T: Text<'a>> {
     pub position: Pos,
     pub name: T::Value,
@@ -212,7 +324,8 @@ pub struct InterfaceTypeExtension<'a, T: Text<'a>> {
 }
 
 impl<'a, T> InterfaceTypeExtension<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -226,6 +339,14 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct UnionType<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -235,7 +356,8 @@ pub struct UnionType<'a, T: Text<'a>> {
 }
 
 impl<'a, T> UnionType<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -249,6 +371,14 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct UnionTypeExtension<'a, T: Text<'a>> {
     pub position: Pos,
     pub name: T::Value,
@@ -257,7 +387,8 @@ pub struct UnionTypeExtension<'a, T: Text<'a>> {
 }
 
 impl<'a, T> UnionTypeExtension<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -270,6 +401,14 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct EnumType<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -279,7 +418,8 @@ pub struct EnumType<'a, T: Text<'a>> {
 }
 
 impl<'a, T> EnumType<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -293,6 +433,14 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct EnumValue<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -301,7 +449,8 @@ pub struct EnumValue<'a, T: Text<'a>> {
 }
 
 impl<'a, T> EnumValue<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -314,6 +463,14 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct EnumTypeExtension<'a, T: Text<'a>> {
     pub position: Pos,
     pub name: T::Value,
@@ -322,7 +479,8 @@ pub struct EnumTypeExtension<'a, T: Text<'a>> {
 }
 
 impl<'a, T> EnumTypeExtension<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -335,6 +493,14 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct InputObjectType<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -344,7 +510,8 @@ pub struct InputObjectType<'a, T: Text<'a>> {
 }
 
 impl<'a, T> InputObjectType<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -358,6 +525,14 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct InputObjectTypeExtension<'a, T: Text<'a>> {
     pub position: Pos,
     pub name: T::Value,
@@ -366,7 +541,8 @@ pub struct InputObjectTypeExtension<'a, T: Text<'a>> {
 }
 
 impl<'a, T> InputObjectTypeExtension<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -379,6 +555,7 @@ where T: Text<'a>
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum DirectiveLocation {
     // executable
     Query,
@@ -404,6 +581,14 @@ pub enum DirectiveLocation {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(bound(
+        serialize = "T::Value: Serialize",
+        deserialize = "T::Value: Deserialize<'de>"
+    ))
+)]
 pub struct DirectiveDefinition<'a, T: Text<'a>> {
     pub position: Pos,
     pub description: Option<String>,
@@ -414,7 +599,8 @@ pub struct DirectiveDefinition<'a, T: Text<'a>> {
 }
 
 impl<'a, T> DirectiveDefinition<'a, T>
-where T: Text<'a>
+where
+    T: Text<'a>,
 {
     pub fn new(name: T::Value) -> Self {
         Self {
@@ -458,27 +644,11 @@ impl DirectiveLocation {
     pub fn is_query(&self) -> bool {
         use self::DirectiveLocation::*;
         match *self {
-            Query
-            | Mutation
-            | Subscription
-            | Field
-            | FragmentDefinition
-            | FragmentSpread
-            | InlineFragment
-                => true,
+            Query | Mutation | Subscription | Field | FragmentDefinition | FragmentSpread
+            | InlineFragment => true,
 
-            Schema
-            | Scalar
-            | Object
-            | FieldDefinition
-            | ArgumentDefinition
-            | Interface
-            | Union
-            | Enum
-            | EnumValue
-            | InputObject
-            | InputFieldDefinition
-                => false,
+            Schema | Scalar | Object | FieldDefinition | ArgumentDefinition | Interface | Union
+            | Enum | EnumValue | InputObject | InputFieldDefinition => false,
         }
     }
 
@@ -492,11 +662,9 @@ impl DirectiveLocation {
 #[error("invalid directive location")]
 pub struct InvalidDirectiveLocation;
 
-
 impl FromStr for DirectiveLocation {
     type Err = InvalidDirectiveLocation;
-    fn from_str(s: &str) -> Result<DirectiveLocation, InvalidDirectiveLocation>
-    {
+    fn from_str(s: &str) -> Result<DirectiveLocation, InvalidDirectiveLocation> {
         use self::DirectiveLocation::*;
         let val = match s {
             "QUERY" => Query,
